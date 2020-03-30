@@ -1,25 +1,66 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment, useState, useEffect } from "react";
+
+// Import Axios
+import axios from 'axios';
+ 
+// Import Components
+import Header from "./components/Header/Header";
+import Form from "./components/Form/Form";
+import List from "./components/List/List";
+
 
 function App() {
+
+  const apiKey = 'b57e7e2b68da4312ac9004f97b7a4785';
+  const codeCountry = 'ar';
+  const url = `https://newsapi.org/v2/top-headlines?country=${codeCountry}&apiKey=${apiKey}`;
+
+  // Crear State Category
+  const initialStateCategory = ''
+  const [category, setSategory] = useState(initialStateCategory);
+
+   // Crear State News
+   const initialStateNews = [];
+   const [news, setNews] = useState(initialStateNews);
+
+  // Declare UserEffect
+  useEffect(() => {
+    requestApi();
+  }, [category]);
+
+  // Declare Methods
+  const requestApi = async () => {
+
+    const apiKey = 'b57e7e2b68da4312ac9004f97b7a4785';
+    const codeCountry = 'ar';
+
+    try {
+      const url = `https://newsapi.org/v2/top-headlines?country=${codeCountry}&category=${category}&apiKey=${apiKey}`;
+      const res = await axios.get(url);
+      const news = res.data.articles;
+     
+      setNews(news);
+      
+    } catch (error) {
+      console.error(error);
+    }
+
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Header title="Buscador de Noticias"></Header>
+
+      <div className="container white">
+        <Form 
+          setSategory={setSategory}
+        />
+
+        <List
+          news={news}
+        />
+      </div>
+    </Fragment>
   );
 }
 
